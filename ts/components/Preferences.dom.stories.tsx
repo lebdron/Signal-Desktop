@@ -491,6 +491,7 @@ export default {
     hasAutoLaunch: true,
     hasCallRingtoneNotification: false,
     hasCensorshipCircumvention: false,
+    censorshipCircumventionUnavailableReason: 'connected',
     hasContentProtection: false,
     hasCountMutedConversations: false,
     hasFailedStorySends: false,

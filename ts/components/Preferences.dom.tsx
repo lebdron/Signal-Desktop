@@ -34,6 +34,7 @@ import {
 } from '../util/expirationTimer.std.ts';
 import { DurationInSeconds } from '../util/durations/index.std.ts';
 import { focusableSelector } from '../util/focusableSelectors.std.ts';
+import { missingCaseError } from '../util/missingCaseError.std.ts';
 import { Modal } from './Modal.dom.tsx';
 import { SearchInput } from './SearchInput.dom.tsx';
 import { removeDiacritics } from '../util/removeDiacritics.std.ts';
@@ -123,6 +124,10 @@ import { PreferencesList } from './preferences/PreferencesList.dom.tsx';
 const { isNumber, noop, partition } = lodash;
 
 type CheckboxChangeHandlerType = (value: boolean) => unknown;
+
+// As on Android and iOS, censorship circumvention can only be turned on while Signal is
+// unreachable but the internet is not.
+export type CensorshipCircumventionUnavailableReason = 'connected' | 'offline';
 type SelectChangeHandlerType<T = string | number> = (value: T) => unknown;
 
 export type PropsDataType = {
@@ -156,6 +161,9 @@ export type PropsDataType = {
   hasAutoLaunch: boolean | undefined;
   hasCallRingtoneNotification: boolean;
   hasCensorshipCircumvention: boolean;
+  censorshipCircumventionUnavailableReason:
+    | CensorshipCircumventionUnavailableReason
+    | undefined;
   hasContentProtection: boolean | undefined;
   hasCountMutedConversations: boolean;
   hasHideMenuBar?: boolean;
@@ -501,6 +509,7 @@ export function Preferences({
   hasAutoLaunch,
   hasCallRingtoneNotification,
   hasCensorshipCircumvention,
+  censorshipCircumventionUnavailableReason,
   hasContentProtection,
   hasCountMutedConversations,
   hasFailedStorySends,
@@ -2100,9 +2109,27 @@ export function Preferences({
             label={i18n(
               'icu:Preferences__PrivacyPage__CensorshipCircumvention__Label'
             )}
-            description={i18n(
-              'icu:Preferences__PrivacyPage__CensorshipCircumvention__Description'
-            )}
+            description={(() => {
+              switch (censorshipCircumventionUnavailableReason) {
+                case 'connected':
+                  return i18n(
+                    'icu:Preferences__PrivacyPage__CensorshipCircumvention__AlreadyConnected'
+                  );
+                case 'offline':
+                  return i18n(
+                    'icu:Preferences__PrivacyPage__CensorshipCircumvention__NoInternet'
+                  );
+                case undefined:
+                  return i18n(
+                    'icu:Preferences__PrivacyPage__CensorshipCircumvention__Description'
+                  );
+                default:
+                  throw missingCaseError(
+                    censorshipCircumventionUnavailableReason
+                  );
+              }
+            })()}
+            disabled={censorshipCircumventionUnavailableReason != null}
             checked={hasCensorshipCircumvention}
             onCheckedChange={onCensorshipCircumventionChange}
           />

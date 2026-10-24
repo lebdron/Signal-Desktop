@@ -69,8 +69,14 @@ import { DAY } from '../../util/durations/index.std.ts';
 import { sendSyncRequests } from '../../textsecure/syncRequests.preload.ts';
 import { SmartUpdateDialog } from './UpdateDialog.preload.tsx';
 import { Preferences } from '../../components/Preferences.dom.tsx';
+import type { CensorshipCircumventionUnavailableReason } from '../../components/Preferences.dom.tsx';
 import { useUpdatesActions } from '../ducks/updates.preload.ts';
 import { getUpdateDialogType } from '../selectors/updates.std.ts';
+import {
+  getNetworkIsOnline,
+  getNetworkSocketStatus,
+} from '../selectors/network.preload.ts';
+import { SocketStatus } from '../../types/SocketStatus.std.ts';
 import { getHasAnyFailedStorySends } from '../selectors/stories.preload.ts';
 import {
   getSelectedConversationId,
@@ -849,6 +855,19 @@ export function SmartPreferences(): JSX.Element | null {
     createItemsAccess('censorship-circumvention', false, value => {
       drop(onCensorshipCircumventionSettingChanged(value));
     });
+  const isOnline = useSelector(getNetworkIsOnline);
+  const socketStatus = useSelector(getNetworkSocketStatus);
+  // Once on, it can always be turned off.
+  let censorshipCircumventionUnavailableReason:
+    | CensorshipCircumventionUnavailableReason
+    | undefined;
+  if (!hasCensorshipCircumvention) {
+    if (!isOnline) {
+      censorshipCircumventionUnavailableReason = 'offline';
+    } else if (socketStatus === SocketStatus.OPEN) {
+      censorshipCircumventionUnavailableReason = 'connected';
+    }
+  }
 
   const [hasRelayCalls, onRelayCallsChange] = createItemsAccess(
     'always-relay-calls',
@@ -1071,6 +1090,9 @@ export function SmartPreferences(): JSX.Element | null {
         hasKeepMutedChatsArchived={hasKeepMutedChatsArchived}
         hasCallRingtoneNotification={hasCallRingtoneNotification}
         hasCensorshipCircumvention={hasCensorshipCircumvention}
+        censorshipCircumventionUnavailableReason={
+          censorshipCircumventionUnavailableReason
+        }
         hasContentProtection={hasContentProtection}
         hasCountMutedConversations={hasCountMutedConversations}
         hasFailedStorySends={hasFailedStorySends}
