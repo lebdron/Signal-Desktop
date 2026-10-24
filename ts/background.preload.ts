@@ -291,6 +291,7 @@ import {
 } from './types/Message2.preload.ts';
 import { JobCancelReason } from './jobs/types.std.ts';
 import { itemStorage } from './textsecure/Storage.preload.ts';
+import { applyCensorshipCircumventionSetting } from './services/censorshipCircumvention.preload.ts';
 import { initMessageCleanup } from './services/messageStateCleanup.dom.ts';
 import { MessageCache } from './services/MessageCache.preload.ts';
 import { saveAndNotify } from './messages/saveAndNotify.preload.ts';
@@ -568,6 +569,8 @@ async function startApp(): Promise<void> {
     window.Whisper.events.on('firstEnvelope', checkFirstEnvelope);
 
     const buildExpirationService = new BuildExpirationService();
+
+    applyCensorshipCircumventionSetting();
 
     drop(
       connectWebAPI({

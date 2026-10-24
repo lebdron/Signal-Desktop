@@ -17,6 +17,8 @@ export type Props = Readonly<{
   i18n: LocalizerType;
   quit: () => unknown;
   tryAgain: () => unknown;
+  // Offered when the connection failed and censorship circumvention is off.
+  tryWithCensorshipCircumvention?: () => unknown;
 }>;
 
 export function InstallScreenErrorStep({
@@ -24,11 +26,13 @@ export function InstallScreenErrorStep({
   i18n,
   quit,
   tryAgain,
+  tryWithCensorshipCircumvention,
 }: Props): ReactElement {
   let errorMessage: string;
   let buttonText = i18n('icu:installTryAgain');
   let onClickButton = useCallback(() => tryAgain(), [tryAgain]);
   let shouldShowQuitButton = false;
+  let shouldShowCensorshipCircumventionButton = false;
 
   switch (error) {
     case InstallScreenError.TooManyDevices:
@@ -44,6 +48,8 @@ export function InstallScreenErrorStep({
       break;
     case InstallScreenError.ConnectionFailed:
       errorMessage = i18n('icu:installConnectionFailed');
+      shouldShowCensorshipCircumventionButton =
+        tryWithCensorshipCircumvention != null;
       break;
     case InstallScreenError.QRCodeFailed:
       buttonText = i18n('icu:Install__learn-more');
@@ -68,6 +74,14 @@ export function InstallScreenErrorStep({
 
       <div className="module-InstallScreenErrorStep__buttons">
         <Button onClick={onClickButton}>{buttonText}</Button>
+        {shouldShowCensorshipCircumventionButton && (
+          <Button
+            onClick={() => tryWithCensorshipCircumvention?.()}
+            variant={ButtonVariant.Secondary}
+          >
+            {i18n('icu:installTryCensorshipCircumvention')}
+          </Button>
+        )}
         {shouldShowQuitButton && (
           <Button onClick={() => quit()} variant={ButtonVariant.Secondary}>
             {i18n('icu:quit')}

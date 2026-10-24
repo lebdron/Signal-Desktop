@@ -134,6 +134,7 @@ import {
   type ZoomFactorType,
 } from '../../types/StorageKeys.std.ts';
 import { pinReminderService } from '../../services/pinReminder.preload.ts';
+import { onCensorshipCircumventionSettingChanged } from '../../services/censorshipCircumvention.preload.ts';
 import { useGlobalModalActions } from '../ducks/globalModals.preload.ts';
 import { maybeUpdateRegistrationLock } from '../../util/registrationLock.preload.ts';
 import { disableSignalPin } from '../../util/disableSignalPin.preload.ts';
@@ -844,6 +845,11 @@ export function SmartPreferences(): JSX.Element | null {
     }
   );
 
+  const [hasCensorshipCircumvention, onCensorshipCircumventionChange] =
+    createItemsAccess('censorship-circumvention', false, value => {
+      drop(onCensorshipCircumventionSettingChanged(value));
+    });
+
   const [hasRelayCalls, onRelayCallsChange] = createItemsAccess(
     'always-relay-calls',
     false
@@ -1064,6 +1070,7 @@ export function SmartPreferences(): JSX.Element | null {
         hasAutoLaunch={hasAutoLaunch}
         hasKeepMutedChatsArchived={hasKeepMutedChatsArchived}
         hasCallRingtoneNotification={hasCallRingtoneNotification}
+        hasCensorshipCircumvention={hasCensorshipCircumvention}
         hasContentProtection={hasContentProtection}
         hasCountMutedConversations={hasCountMutedConversations}
         hasFailedStorySends={hasFailedStorySends}
@@ -1123,6 +1130,7 @@ export function SmartPreferences(): JSX.Element | null {
         onAutoLaunchChange={onAutoLaunchChange}
         onBackupKeyViewed={onBackupKeyViewed}
         onCallRingtoneNotificationChange={onCallRingtoneNotificationChange}
+        onCensorshipCircumventionChange={onCensorshipCircumventionChange}
         onContentProtectionChange={onContentProtectionChange}
         onCountMutedConversationsChange={onCountMutedConversationsChange}
         onEmojiSkinToneDefaultChange={onEmojiSkinToneDefaultChange}

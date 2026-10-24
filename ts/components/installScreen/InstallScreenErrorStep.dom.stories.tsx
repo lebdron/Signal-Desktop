@@ -42,3 +42,11 @@ export const _ConnectionFailed = (): JSX.Element => (
     error={InstallScreenError.ConnectionFailed}
   />
 );
+
+export const ConnectionFailedWithCensorshipCircumvention = (): JSX.Element => (
+  <InstallScreenErrorStep
+    {...defaultProps}
+    error={InstallScreenError.ConnectionFailed}
+    tryWithCensorshipCircumvention={action('tryWithCensorshipCircumvention')}
+  />
+);

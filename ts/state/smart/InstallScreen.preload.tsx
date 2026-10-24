@@ -15,7 +15,15 @@ import { missingCaseError } from '../../util/missingCaseError.std.ts';
 import { backupsService } from '../../services/backups/index.preload.ts';
 import { InstallScreen } from '../../components/InstallScreen.dom.tsx';
 import { WidthBreakpoint } from '../../components/_util.std.ts';
-import { InstallScreenStep } from '../../types/InstallScreen.std.ts';
+import {
+  InstallScreenError,
+  InstallScreenStep,
+} from '../../types/InstallScreen.std.ts';
+import {
+  enableCensorshipCircumvention,
+  isCensorshipCircumventionEnabled,
+} from '../../services/censorshipCircumvention.preload.ts';
+import { drop } from '../../util/drop.std.ts';
 import OS from '../../util/os/osMain.node.ts';
 import { isStagingServer } from '../../util/isStagingServer.dom.ts';
 import { createLogger } from '../../logging/log.std.ts';
@@ -96,6 +104,18 @@ export const SmartInstallScreen = memo(function SmartInstallScreen() {
           error: installerState.error,
           quit: () => window.IPC.shutdown(),
           tryAgain: startInstaller,
+          tryWithCensorshipCircumvention:
+            installerState.error === InstallScreenError.ConnectionFailed &&
+            !isCensorshipCircumventionEnabled()
+              ? () => {
+                  drop(
+                    (async () => {
+                      await enableCensorshipCircumvention();
+                      await startInstaller();
+                    })()
+                  );
+                }
+              : undefined,
         },
       };
       break;

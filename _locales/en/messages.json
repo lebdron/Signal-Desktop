@@ -2422,6 +2422,14 @@
     "messageformat": "Show an icon in message details when they were delivered using sealed sender.",
     "description": "Preferences > Privacy Page > Show Status Icon Checkbox > Description"
   },
+  "icu:Preferences__PrivacyPage__CensorshipCircumvention__Label": {
+    "messageformat": "Censorship circumvention",
+    "description": "Preferences > Privacy Page > Advanced > Censorship circumvention toggle > Label"
+  },
+  "icu:Preferences__PrivacyPage__CensorshipCircumvention__Description": {
+    "messageformat": "If enabled, Signal will attempt to circumvent censorship. Do not enable this feature unless you are in a location where Signal is censored.",
+    "description": "Preferences > Privacy Page > Advanced > Censorship circumvention toggle > Description, matching the Android and iOS setting"
+  },
   "icu:Preferences__PrivacyPage__KeyTransparency__Label": {
     "messageformat": "Automatic key verification",
     "description": "Preferences > Privacy Page > Key Transparency Checkbox > Label"
@@ -2460,6 +2468,10 @@
   },
   "icu:installTryAgain": {
     "messageformat": "Try again"
+  },
+  "icu:installTryCensorshipCircumvention": {
+    "messageformat": "Try censorship circumvention",
+    "description": "Install screen > Connection failed > Secondary button that turns on censorship circumvention and tries to connect again"
   },
   "icu:Preferences--theme": {
     "messageformat": "Theme",

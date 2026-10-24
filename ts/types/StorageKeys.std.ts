@@ -80,6 +80,7 @@ export type StorageAccessType = {
   'auto-download-update': boolean;
   'auto-download-attachment': AutoDownloadAttachmentType;
   autoConvertEmoji: boolean;
+  'censorship-circumvention': boolean;
   'badge-count-muted-conversations': boolean;
   'blocked-groups': ReadonlyArray<BlockedGroup>;
   'blocked-uuids': ReadonlyArray<BlockedServiceId>;
@@ -382,6 +383,7 @@ export const STORAGE_KEYS_TO_PRESERVE_AFTER_UNLINK = [
   'audioMessage',
   'auto-download-update',
   'autoConvertEmoji',
+  'censorship-circumvention',
   'badge-count-muted-conversations',
   'call-ringtone-notification',
   'customColors',

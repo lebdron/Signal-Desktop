@@ -155,6 +155,7 @@ export type PropsDataType = {
   hasAutoDownloadUpdate: boolean;
   hasAutoLaunch: boolean | undefined;
   hasCallRingtoneNotification: boolean;
+  hasCensorshipCircumvention: boolean;
   hasContentProtection: boolean | undefined;
   hasCountMutedConversations: boolean;
   hasHideMenuBar?: boolean;
@@ -348,6 +349,7 @@ type PropsFunctionType = {
   onAutoLaunchChange: CheckboxChangeHandlerType;
   onBackupKeyViewed: ({ backupKeyHash }: { backupKeyHash: string }) => void;
   onCallRingtoneNotificationChange: CheckboxChangeHandlerType;
+  onCensorshipCircumventionChange: CheckboxChangeHandlerType;
   onContentProtectionChange: CheckboxChangeHandlerType;
   onCountMutedConversationsChange: CheckboxChangeHandlerType;
   onEmojiSkinToneDefaultChange: (emojiSkinTone: Emoji.SkinTone) => void;
@@ -498,6 +500,7 @@ export function Preferences({
   hasAutoDownloadUpdate,
   hasAutoLaunch,
   hasCallRingtoneNotification,
+  hasCensorshipCircumvention,
   hasContentProtection,
   hasCountMutedConversations,
   hasFailedStorySends,
@@ -555,6 +558,7 @@ export function Preferences({
   onAutoLaunchChange,
   onBackupKeyViewed,
   onCallRingtoneNotificationChange,
+  onCensorshipCircumventionChange,
   onContentProtectionChange,
   onCountMutedConversationsChange,
   onEmojiSkinToneDefaultChange,
@@ -2091,6 +2095,16 @@ export function Preferences({
             )}
             checked={hasSealedSenderIndicators}
             onCheckedChange={onSealedSenderIndicatorsChange}
+          />
+          <AxoSwitchItem.Root
+            label={i18n(
+              'icu:Preferences__PrivacyPage__CensorshipCircumvention__Label'
+            )}
+            description={i18n(
+              'icu:Preferences__PrivacyPage__CensorshipCircumvention__Description'
+            )}
+            checked={hasCensorshipCircumvention}
+            onCheckedChange={onCensorshipCircumventionChange}
           />
           {isKeyTransparencyAvailable && (
             <AxoSwitchItem.Root

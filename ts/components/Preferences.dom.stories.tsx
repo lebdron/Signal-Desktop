@@ -490,6 +490,7 @@ export default {
     hasAutoDownloadUpdate: true,
     hasAutoLaunch: true,
     hasCallRingtoneNotification: false,
+    hasCensorshipCircumvention: false,
     hasContentProtection: false,
     hasCountMutedConversations: false,
     hasFailedStorySends: false,
@@ -620,6 +621,7 @@ export default {
     onCallRingtoneNotificationChange: action(
       'onCallRingtoneNotificationChange'
     ),
+    onCensorshipCircumventionChange: action('onCensorshipCircumventionChange'),
     onContentProtectionChange: action('onContentProtectionChange'),
     onCountMutedConversationsChange: action('onCountMutedConversationsChange'),
     onEmojiSkinToneDefaultChange: action('onEmojiSkinToneDefaultChange'),
