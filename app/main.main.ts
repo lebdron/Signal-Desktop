@@ -2979,6 +2979,9 @@ ipc.on('get-config', async event => {
     // Should be already computed and cached at this point
     dnsFallback: await getDNSFallback(),
     disableIPv6: DISABLE_IPV6,
+    // Local patch: on unless SIGNAL_CENSORSHIP_CIRCUMVENTION=0.
+    censorshipCircumvention:
+      process.env.SIGNAL_CENSORSHIP_CIRCUMVENTION !== '0',
     disableScreenSecurity: DISABLE_SCREEN_SECURITY,
     nodeVersion: process.versions.node,
     hostname: os.hostname(),

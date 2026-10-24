@@ -74,6 +74,12 @@ if (window.SignalContext.config?.serverUrl) {
   );
 
   libsignalNet.setIpv6Enabled(!config.disableIPv6);
+  // Local patch: try libsignal's domain-fronted routes when the direct route is blocked,
+  // as the Android and iOS apps do with censorship circumvention on.
+  log.info(
+    `libsignal censorship circumvention: ${config.censorshipCircumvention ? 'enabled' : 'disabled'}`
+  );
+  libsignalNet.setCensorshipCircumventionEnabled(config.censorshipCircumvention);
   if (config.proxyUrl) {
     log.info('WebAPI: Setting libsignal proxy');
     try {

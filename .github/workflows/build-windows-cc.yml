@@ -1,0 +1,51 @@
+# Builds an unsigned Windows installer of this patched Signal Desktop: censorship
+# circumvention on by default (SIGNAL_CENSORSHIP_CIRCUMVENTION=0 turns it off) and
+# auto-update off, so the app does not replace itself with the official build.
+# Steps follow the upstream ci.yml "windows" job, on a standard runner.
+name: Build Windows (censorship circumvention)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['cc/**']
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup environment
+        uses: ./.github/actions/setup
+        with:
+          cache-electron-builder: true
+
+      - name: Remove certificate fields from package.json
+        shell: cmd
+        run: |
+          copy package.json temp.json
+          del package.json
+          type temp.json | findstr /v certificateSubjectName | findstr /v certificateSha1 > package.json
+
+      - name: Run generate
+        run: pnpm run generate
+
+      - name: Build installer (NSIS)
+        run: pnpm run build:release --publish=never
+        env:
+          DISABLE_INSPECT_FUSE: on
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: signal-desktop-cc-windows
+          path: |
+            release/*.exe
+            release/*.yml
+          if-no-files-found: error
+          retention-days: 30

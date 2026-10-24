@@ -47,6 +47,7 @@ import { toWebSafeBase64 } from '../util/webSafeBase64.std.ts';
 import { getBasicAuth } from '../util/getBasicAuth.std.ts';
 import { createHTTPSAgent } from '../util/createHTTPSAgent.node.ts';
 import { createProxyAgent } from '../util/createProxyAgent.node.ts';
+import { fetchMaybeFronted } from '../util/censorshipFronting.node.ts';
 import type { ProxyAgent } from '../util/createProxyAgent.node.ts';
 import type { FetchFunctionType } from '../util/uploads/tusProtocol.node.ts';
 import { VerificationTransport } from '../types/VerificationTransport.std.ts';
@@ -495,9 +496,15 @@ async function _promiseAjax<Type extends ResponseType, OutputShape>(
   let response: Response;
 
   try {
+    // Local patch: storage and CDN requests go through the reflectors when censorship
+    // circumvention is on; chat requests go through libsignal, which fronts them itself.
     response = socketManager
       ? await socketManager.fetch(url, fetchOptions)
-      : await fetch(url, fetchOptions);
+      : await fetchMaybeFronted(
+          url,
+          fetchOptions,
+          window.SignalContext.config.censorshipCircumvention
+        );
   } catch (e) {
     if (isAbortError(e)) {
       throw e;
@@ -3302,16 +3309,22 @@ export function createFetchForAttachmentUpload({
       headers: uploadHeaders,
     });
 
-    return fetch(endpoint, {
-      ...fetchOptions,
-      ...init,
-      headers: {
-        ...fetchOptions.headers,
-        // FIXME
-        // oxlint-disable-next-line typescript/no-misused-spread
-        ...init.headers,
+    // Local patch: fronted when censorship circumvention is on. The origin was asserted
+    // above on the real URL; tus hands each later chunk's absolute cdn3 URL back here.
+    return fetchMaybeFronted(
+      endpoint.toString(),
+      {
+        ...fetchOptions,
+        ...init,
+        headers: {
+          ...fetchOptions.headers,
+          // FIXME
+          // oxlint-disable-next-line typescript/no-misused-spread
+          ...init.headers,
+        },
       },
-    });
+      window.SignalContext.config.censorshipCircumvention
+    );
   };
 }
 
